@@ -1,0 +1,55 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Resources:
+  # DynamoDB Table
+  UserInfoTable:
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      TableName: cdc_dynamo_to_lake_user_info
+      AttributeDefinitions:
+        - AttributeName: user_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: user_id
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES # Enables DynamoDB Streams with both old and new image
+          
+  # Lambda Function
+  PlatformCDCDynamoToLakeHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: PlatformCDCDynamoToLakeHandler
+      Handler: handler.handler
+      Runtime: python3.11
+      CodeUri: ./
+      # Note: Kindly restrict the policies as per your need, wrt to the stream & the s3 bucket
+      Policies:
+        - AdministratorAccess
+      Environment:
+      Variables:
+        ENV: "dev"
+        CDC_GLUE_DB_NAME: "CDC_GLUE_DB_NAME"
+        CDC_S3_STORE_BUCKET_NAME: "CDC_S3_STORE_BUCKET_NAME"
+        IS_SLACK_NOTIFICATION_ENABLED: "DISABLED"
+        SLACK_WEBHOOK_URL: "SLACK_WEBHOOK_URL"
+
+      Events:
+        DynamoDBStream:
+          Type: DynamoDB
+          Properties:
+            Stream: !GetAtt UserInfoTable.StreamArn
+            BatchSize: 5  # Number of records to process in a single batch; Increase as per the need
+            StartingPosition: TRIM_HORIZON  # Can be set to LATEST or TRIM_HORIZON
+
+
+Outputs:
+  UserInfoTableName:
+    Description: "The name of the User Info DynamoDB table"
+    Value: !Ref UserInfoTable
+
+  LambdaFunctionName:
+    Description: "The name of the Lambda function"
+    Value: !Ref UserInfoLambdaFunction

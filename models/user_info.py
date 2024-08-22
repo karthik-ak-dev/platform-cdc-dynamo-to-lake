@@ -1,7 +1,7 @@
 from models.abstract import ModelBaseAbstract
 
 
-class AchievementsInfoModel(ModelBaseAbstract):
+class UserInfoModel(ModelBaseAbstract):
     def __init__(
         self,
         athena_boto_cli,
@@ -19,11 +19,7 @@ class AchievementsInfoModel(ModelBaseAbstract):
             # Added at the iceberg table level
             "record__last_modified_at": "string",
             # Actual data-source
-            "achievement_id": "string",
-            "achievement_criteria": "string",
-            "achievement_level": "string",
-            "achievement_name": "string",
-            "achievement_type": "string",
-            "target_count": "string",
-            "web3_reference_id": "string",
+            "user_id": "string",
+            "first_name": "string",
+            "last_name": "string",
         }

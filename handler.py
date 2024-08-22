@@ -6,7 +6,7 @@ from logger_util import Logger
 from notification_util import NotificationUtil
 from boto3.dynamodb.types import TypeDeserializer
 from exceptions import InvalidInputException
-from models.achievements_info import AchievementsInfoModel
+from models.user_info import UserInfoModel
 
 
 ENV = os.getenv("ENV")
@@ -66,19 +66,11 @@ def fetch_model_factory(**kwargs):
         frmt_t_name = table_name
         frmt_t_name = frmt_t_name.replace("_iceberg_table", "")
 
-        if env == "PreProdStage":
-            frmt_t_name = frmt_t_name.replace("preprodstage_", "")
-            frmt_t_name = frmt_t_name.replace("pre_prod_", "")
-        elif env == "ProdStage":
-            frmt_t_name = frmt_t_name.replace("prodstage_", "")
-            frmt_t_name = frmt_t_name.replace("prod_", "")
-        else:
-            raise InvalidInputException(msg=f"Invalid Env: {env}")
-
         return frmt_t_name
 
     factories = {
-        "achievementsinfo": AchievementsInfoModel(**kwargs),
+        "cdc_dynamo_to_lake_user_info": UserInfoModel(**kwargs),
+        # Add more models as per the need
     }
 
     table_name = kwargs.get("table_name", None)

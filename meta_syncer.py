@@ -6,7 +6,6 @@ class IcebergTableMetaSyncer:
     def __init__(
         self, client, database_name, table_name, q_output_location, catalog_name=None
     ) -> None:
-        self.env = "PreProdStage"
         self.client = client
         self.database_name: str = database_name
         self.table_name: str = table_name
