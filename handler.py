@@ -96,16 +96,13 @@ def handler(event, context):
         dynamo_table_name: str = (
             records[0]["eventSourceARN"].split(":table/")[1].split("/stream")[0]
         )
-        frmt_dynamo_table_name: str = (
-            f"{dynamo_table_name.lower().replace('-', '_')}_iceberg_table"
-        )
 
-        q_output_location = f"s3://{s3_bucketname}/dynamo-iceberg-tables/{frmt_dynamo_table_name}/logs/athena_output/"
+        q_output_location = f"s3://{s3_bucketname}/dynamo-iceberg-tables/{dynamo_table_name}/logs/athena_output/"
 
         Model = fetch_model_factory(
             athena_boto_cli=athena_boto_cli,
             database_name=database_name,
-            table_name=frmt_dynamo_table_name,
+            table_name=dynamo_table_name,
             q_output_location=q_output_location,
             catalog_name=None,
         )

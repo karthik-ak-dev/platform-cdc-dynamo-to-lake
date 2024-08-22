@@ -24,17 +24,18 @@ Resources:
       FunctionName: PlatformCDCDynamoToLakeHandler
       Handler: handler.handler
       Runtime: python3.11
+      Timeout: 60 # In seconds
       CodeUri: ./
       # Note: Kindly restrict the policies as per your need, wrt to the stream & the s3 bucket
       Policies:
         - AdministratorAccess
       Environment:
-      Variables:
-        ENV: "dev"
-        CDC_GLUE_DB_NAME: "CDC_GLUE_DB_NAME"
-        CDC_S3_STORE_BUCKET_NAME: "CDC_S3_STORE_BUCKET_NAME"
-        IS_SLACK_NOTIFICATION_ENABLED: "DISABLED"
-        SLACK_WEBHOOK_URL: "SLACK_WEBHOOK_URL"
+        Variables:
+          ENV: "dev"
+          CDC_GLUE_DB_NAME: "CDC_GLUE_DB_NAME"
+          CDC_S3_STORE_BUCKET_NAME: "CDC_S3_STORE_BUCKET_NAME"
+          IS_SLACK_NOTIFICATION_ENABLED: "IS_SLACK_NOTIFICATION_ENABLED"
+          SLACK_WEBHOOK_URL: "SLACK_WEBHOOK_URL"
 
       Events:
         DynamoDBStream:
@@ -52,4 +53,4 @@ Outputs:
 
   LambdaFunctionName:
     Description: "The name of the Lambda function"
-    Value: !Ref UserInfoLambdaFunction
+    Value: !Ref PlatformCDCDynamoToLakeHandler
